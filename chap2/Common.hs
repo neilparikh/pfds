@@ -1,7 +1,7 @@
 module Common where
 import Test.QuickCheck (Arbitrary, arbitrary, oneof)
 
-data Tree a = E | T (Tree a) a (Tree a) deriving Show
+data Tree a = E | T (Tree a) a (Tree a) deriving (Show, Eq)
 
 instance (Arbitrary a) => Arbitrary (Tree a) where
     arbitrary = oneof [
