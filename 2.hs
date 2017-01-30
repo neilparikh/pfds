@@ -6,12 +6,14 @@ main = do
     -- y <- getLine
     -- print $ insert (T (T E 2 E) 3 (T E 4 E) :: Tree Int) (read y)
 
+-- Ex 2.1
 suffixes :: [a] -> [[a]]
 suffixes [] = []:[]
 suffixes list@(_:xs) = list:suffixes xs
 
 data Tree a = E | T (Tree a) a (Tree a) deriving Show
 
+-- Ex 2.2
 member :: Ord a => Tree a -> a -> Maybe a -> Bool
 member E _ Nothing = False
 member E x (Just possible) = x == possible
@@ -26,6 +28,7 @@ insert tree@(T left y right) x
     | x > y = T left y (insert right x)
     | otherwise = tree
 
+-- Ex 2.3
 insert2 :: (Ord a) => Tree a -> a -> Tree a
 insert2 tree x = case (insert2' tree) of
     Just t -> t
