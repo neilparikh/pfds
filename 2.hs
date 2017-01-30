@@ -39,3 +39,17 @@ insert2 tree x = case (insert2' tree) of
         | x < y = T <$> (insert2' left) <*> (pure y) <*> (pure right)
         | x > y = T left y <$> (insert2' right)
         | otherwise = Nothing
+
+-- Ex 2.4
+insert3 :: (Ord a) => Tree a -> a -> Tree a
+insert3 tree x = case (insert3' tree Nothing) of
+    Just t -> t
+    Nothing -> tree
+    where
+    insert3' E Nothing = pure $ T E x E
+    insert3' E (Just y)
+        | x == y = Nothing
+        | otherwise = pure $ T E x E
+    insert3' (T left y right) possibleMatch
+        | x < y = T <$> (insert3' left possibleMatch) <*> (pure y) <*> (pure right)
+        | otherwise = T left y <$> (insert3' right (Just y))
