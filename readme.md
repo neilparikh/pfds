@@ -11,7 +11,6 @@ solutions for purely functional data structure by chris okasaki
     * [x] ex 2.4
     * [ ] ex 2.5
     * [ ] ex 2.6
-- [ ] chapter 2
 - [ ] chapter 3
 - [ ] chapter 4
 - [ ] chapter 5
