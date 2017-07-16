@@ -1,5 +1,5 @@
 module Common where
-import Test.QuickCheck (Arbitrary, arbitrary, frequency, choose, Gen)
+import Test.QuickCheck (Arbitrary, arbitrary, frequency, choose, Gen, sized)
 import System.Random (Random)
 import Control.Monad (liftM3)
 
@@ -7,17 +7,18 @@ data Tree a = E | T (Tree a) a (Tree a) deriving (Show, Eq)
 
 -- from http://www.seas.upenn.edu/~cis552/12fa/lectures/stub/BST.html
 instance (Ord a, Enum a, Bounded a, Random a, Arbitrary a) => Arbitrary (Tree a)  where
-    arbitrary = gen minBound maxBound where
-        gen :: (Ord a, Random a, Bounded a, Enum a) => a -> a -> Gen (Tree a)
-        gen min max
+    arbitrary = sized $ gen minBound maxBound where
+        gen :: (Ord a, Random a, Bounded a, Enum a) => a -> a -> Int -> Gen (Tree a)
+        gen min max size
+            | size == 0 = return E
             | max <= (succ . succ . succ) minBound = return E
             | min >= pred maxBound = return E
             | min >= (pred . pred . pred) max  = return E
-        gen min max = do
+        gen min max size = do
             elt <- choose (min, max)
             frequency [ (1, return E),
-                        (6, liftM3 T (gen min (pred elt))
-                        (return elt) (gen (succ elt) max)) ]
+                        (6, liftM3 T (gen min (pred elt) (size `div` 2))
+                        (return elt) (gen (succ elt) max (size `div` 2))) ]
 
 member :: Ord a => Tree a -> a -> Bool
 member E _ = False
