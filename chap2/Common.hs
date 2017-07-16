@@ -6,15 +6,18 @@ import Control.Monad (liftM3)
 data Tree a = E | T (Tree a) a (Tree a) deriving (Show, Eq)
 
 -- from http://www.seas.upenn.edu/~cis552/12fa/lectures/stub/BST.html
-instance (Ord a, Bounded a, Random a, Num a, Arbitrary a) => Arbitrary (Tree a)  where
-    arbitrary = gen 0 100 where
-        gen :: (Ord a, Num a, Random a) => a -> a -> Gen (Tree a)
-        gen min max | (max - min) <= 3 = return E
+instance (Ord a, Enum a, Bounded a, Random a, Arbitrary a) => Arbitrary (Tree a)  where
+    arbitrary = gen minBound maxBound where
+        gen :: (Ord a, Random a, Bounded a, Enum a) => a -> a -> Gen (Tree a)
+        gen min max
+            | max <= (succ . succ . succ) minBound = return E
+            | min >= pred maxBound = return E
+            | min >= (pred . pred . pred) max  = return E
         gen min max = do
             elt <- choose (min, max)
             frequency [ (1, return E),
-                        (6, liftM3 T (gen min (elt - 1))
-                        (return elt) (gen (elt + 1) max)) ]
+                        (6, liftM3 T (gen min (pred elt))
+                        (return elt) (gen (succ elt) max)) ]
 
 member :: Ord a => Tree a -> a -> Bool
 member E _ = False
